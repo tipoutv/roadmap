@@ -2,20 +2,19 @@ import { PlayerData } from "../data/types";
 import { Analysis, Agent, Map } from "./types";
 
 /**
- * Normalise n'importe quel MatchResult en "win" | "lose"
- * -> safe pour mock, Riot, DB, futur changement
+ * Normalise n'importe quel MatchResult externe
+ * en valeur interne stable: "win" | "lose"
  */
 function normalizeResult(result: unknown): "win" | "lose" | null {
   if (typeof result === "string") {
     const r = result.toLowerCase();
 
-    if (r.includes("win") || r.includes("victory")) return "win";
-    if (r.includes("lose") || r.includes("loss") || r.includes("defeat"))
-      return "lose";
+    if (r.includes("win")) return "win";
+    if (r.includes("lose") || r.includes("loss")) return "lose";
   }
 
   if (typeof result === "number") {
-    // exemple : 1 = win, 0 = lose
+    // fallback si jamais Riot / DB utilise 1 / 0
     return result === 1 ? "win" : "lose";
   }
 
@@ -25,14 +24,7 @@ function normalizeResult(result: unknown): "win" | "lose" | null {
 export function analyzePlayer(data: PlayerData): Analysis {
   const matches = data.matches;
 
-  const wins = matches.filter(
-    (m) => normalizeResult(m.result) === "win"
-  ).length;
-
-  const winrate = matches.length
-    ? Math.round((wins / matches.length) * 100)
-    : 0;
-
+  let wins = 0;
   const agentCount: Partial<Record<Agent, number>> = {};
   const mapLosses: Partial<Record<Map, number>> = {};
 
@@ -41,6 +33,10 @@ export function analyzePlayer(data: PlayerData): Analysis {
 
   for (const m of matches) {
     const result = normalizeResult(m.result);
+
+    if (result === "win") {
+      wins++;
+    }
 
     if (m.agent) {
       const agent = m.agent as Agent;
@@ -55,6 +51,10 @@ export function analyzePlayer(data: PlayerData): Analysis {
     totalKills += m.kills ?? 0;
     totalDeaths += m.deaths ?? 0;
   }
+
+  const winrate = matches.length
+    ? Math.round((wins / matches.length) * 100)
+    : 0;
 
   const mainAgent =
     (Object.entries(agentCount)
