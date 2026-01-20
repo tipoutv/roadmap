@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 export function useStats() {
   const [stats, setStats] = useState({
-    players: 124,
+    players: 400,
     matches: 892,
     roadmaps: 310,
   });
