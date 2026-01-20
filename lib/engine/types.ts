@@ -1,4 +1,6 @@
-// Ranks Valorant
+/* =======================
+   RANKS VALORANT
+======================= */
 export type Rank =
   | "Iron"
   | "Bronze"
@@ -10,14 +12,18 @@ export type Rank =
   | "Immortal"
   | "Radiant";
 
-// Roles Valorant
+/* =======================
+   ROLES VALORANT
+======================= */
 export type Role =
   | "Duelist"
   | "Initiator"
   | "Controller"
   | "Sentinel";
 
-// Agents (liste extensible)
+/* =======================
+   AGENTS (EXTENSIBLE)
+======================= */
 export type Agent =
   | "Jett"
   | "Reyna"
@@ -32,7 +38,9 @@ export type Agent =
   | "Killjoy"
   | "Sage";
 
-// Maps
+/* =======================
+   MAPS
+======================= */
 export type Map =
   | "Ascent"
   | "Bind"
@@ -43,10 +51,15 @@ export type Map =
   | "Icebox"
   | "Sunset";
 
-// Autres
+/* =======================
+   OBJECTIFS & TEMPS
+======================= */
 export type Objective = "Climb" | "Improve";
 export type TimePerDay = "30m" | "1h" | "2h+";
 
+/* =======================
+   INPUT UTILISATEUR (IA)
+======================= */
 export type UserInput = {
   rank: Rank;
   role: Role;
@@ -56,6 +69,61 @@ export type UserInput = {
   timePerDay: TimePerDay;
 };
 
+/* =======================
+   MATCH (MOCK / RIOT)
+======================= */
 export type Match = {
   result: "win" | "lose";
+
+  // Champs optionnels (mock-friendly & Riot-ready)
+  kills?: number;
+  deaths?: number;
+  agent?: Agent;
+  map?: Map;
+};
+
+/* =======================
+   ANALYSE IA (SORTIE)
+======================= */
+export type Analysis = {
+  winrate: number;           // %
+  mainAgent: Agent | null;
+  worstMap: Map | null;
+  avgKDA: number;
+};
+
+/* =======================
+   RÈGLES IA (COACHING)
+======================= */
+export type Rule = {
+  source: "rank" | "role" | "agent" | "map";
+  title: string;
+  description: string;
+  severity: "low" | "medium" | "high";
+  premium?: boolean;
+};
+
+/* =======================
+   ROADMAP IA (UI)
+======================= */
+export type RoadmapStep = {
+  title: string;
+  description: string;
+  frequency: string;
+  premium?: boolean;
+};
+
+export type RoadmapResult = {
+  priority:
+    | "Aim & basics"
+    | "Consistency"
+    | "Clutch & decision making"
+    | "Mental reset";
+
+  winrate: number;
+  level: "low" | "mid" | "high";
+  focus: string;
+
+  steps: RoadmapStep[];
+  rules: Rule[];
 };

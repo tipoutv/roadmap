@@ -1,14 +1,21 @@
 import { Rank, Role, Agent, Map } from "./types";
 
+/* =======================
+   TYPE DE RÈGLE IA
+======================= */
+
 export type Rule = {
   source: "rank" | "role" | "agent" | "map";
   title: string;
   description: string;
+  severity: "low" | "medium" | "high";
+  premium?: boolean;
 };
 
 /* =======================
    RÈGLES PAR ROLE
 ======================= */
+
 export function roleRules(role: Role): Rule[] {
   switch (role) {
     case "Duelist":
@@ -16,7 +23,8 @@ export function roleRules(role: Role): Rule[] {
         {
           source: "role",
           title: "Entry discipline",
-          description: "Create space first, but avoid ego peeks.",
+          description: "Create space first, avoid ego peeks and dry entries.",
+          severity: "high",
         },
       ];
 
@@ -25,7 +33,8 @@ export function roleRules(role: Role): Rule[] {
         {
           source: "role",
           title: "Utility before fights",
-          description: "Use flashes or info before committing.",
+          description: "Use flashes or info-gathering utility before committing.",
+          severity: "high",
         },
       ];
 
@@ -34,7 +43,8 @@ export function roleRules(role: Role): Rule[] {
         {
           source: "role",
           title: "Smoke timing",
-          description: "Smokes should land before contact.",
+          description: "Smokes should land before contact and deny vision early.",
+          severity: "medium",
         },
       ];
 
@@ -43,22 +53,28 @@ export function roleRules(role: Role): Rule[] {
         {
           source: "role",
           title: "Hold space",
-          description: "Play time and deny map control.",
+          description: "Play time, hold angles and deny map control.",
+          severity: "medium",
         },
       ];
+
+    default:
+      return [];
   }
 }
 
 /* =======================
    RÈGLES PAR RANK
 ======================= */
+
 export function rankRules(rank: Rank): Rule[] {
   if (rank === "Iron" || rank === "Bronze") {
     return [
       {
         source: "rank",
         title: "Fundamentals first",
-        description: "Crosshair placement and positioning matter more than aim.",
+        description: "Focus on crosshair placement and basic positioning.",
+        severity: "high",
       },
     ];
   }
@@ -68,7 +84,8 @@ export function rankRules(rank: Rank): Rule[] {
       {
         source: "rank",
         title: "Reduce mistakes",
-        description: "Stop dry peeking and overextending.",
+        description: "Avoid dry peeks, overextending and unnecessary fights.",
+        severity: "medium",
       },
     ];
   }
@@ -77,7 +94,8 @@ export function rankRules(rank: Rank): Rule[] {
     {
       source: "rank",
       title: "Decision making",
-      description: "Play the round, not the duel.",
+      description: "Play the round objective instead of hunting kills.",
+      severity: "low",
     },
   ];
 }
@@ -85,14 +103,16 @@ export function rankRules(rank: Rank): Rule[] {
 /* =======================
    RÈGLES PAR AGENT
 ======================= */
+
 export function agentRules(agent: Agent): Rule[] {
   switch (agent) {
     case "Jett":
       return [
         {
           source: "agent",
-          title: "Entry with dash",
-          description: "Dash after contact, not before.",
+          title: "Dash discipline",
+          description: "Dash after first contact, not blindly into site.",
+          severity: "high",
         },
       ];
 
@@ -101,7 +121,9 @@ export function agentRules(agent: Agent): Rule[] {
         {
           source: "agent",
           title: "Creative smokes",
-          description: "Use one-ways and off-angle smokes.",
+          description: "Use one-ways and off-angle smokes to create advantage.",
+          severity: "medium",
+          premium: true,
         },
       ];
 
@@ -110,7 +132,8 @@ export function agentRules(agent: Agent): Rule[] {
         {
           source: "agent",
           title: "Info timing",
-          description: "Drone and dart before pushing.",
+          description: "Use drone and recon before pushing or retaking.",
+          severity: "high",
         },
       ];
 
@@ -122,6 +145,7 @@ export function agentRules(agent: Agent): Rule[] {
 /* =======================
    RÈGLES PAR MAP
 ======================= */
+
 export function mapRules(map: Map): Rule[] {
   switch (map) {
     case "Ascent":
@@ -129,7 +153,8 @@ export function mapRules(map: Map): Rule[] {
         {
           source: "map",
           title: "Mid control",
-          description: "Control mid before committing to a site.",
+          description: "Fight for mid control before committing to a site.",
+          severity: "medium",
         },
       ];
 
@@ -138,7 +163,8 @@ export function mapRules(map: Map): Rule[] {
         {
           source: "map",
           title: "Teleport awareness",
-          description: "Track rotations using teleport sounds.",
+          description: "Track rotations using teleport sounds and timings.",
+          severity: "medium",
         },
       ];
 
@@ -147,7 +173,8 @@ export function mapRules(map: Map): Rule[] {
         {
           source: "map",
           title: "Rotate discipline",
-          description: "Avoid over-rotating early.",
+          description: "Avoid over-rotating early and losing site control.",
+          severity: "medium",
         },
       ];
 
