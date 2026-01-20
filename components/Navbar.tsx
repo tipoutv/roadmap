@@ -2,12 +2,28 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+/**
+ * Mock dynamique
+ * → remplaçable plus tard par API / Supabase
+ */
+function useLfgCount() {
+  const [count, setCount] = useState<number>(0);
+
+  useEffect(() => {
+    // Mock : nombre random entre 12 et 38
+    setCount(Math.floor(Math.random() * 26) + 12);
+  }, []);
+
+  return count;
+}
 
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
   const [search, setSearch] = useState("");
+  const lfgCount = useLfgCount();
 
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -15,16 +31,37 @@ export default function Navbar() {
     router.push(`/player/${encodeURIComponent(search)}`);
   }
 
-  const navItem = (href: string, label: string) => (
+  const navItem = (
+    href: string,
+    label: string,
+    options?: {
+      badge?: "NEW";
+      count?: number;
+    }
+  ) => (
     <Link
       href={href}
-      className={`px-3 py-2 text-sm rounded-md transition-colors ${
+      className={`relative px-3 py-2 text-sm rounded-md transition-colors ${
         pathname === href
           ? "text-white"
           : "text-neutral-400 hover:text-white"
       }`}
     >
       {label}
+
+      {/* BADGE NEW */}
+      {options?.badge === "NEW" && (
+        <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded bg-red-500 text-white">
+          NEW
+        </span>
+      )}
+
+      {/* COUNT BADGE */}
+      {typeof options?.count === "number" && (
+        <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded bg-neutral-700 text-white">
+          {options.count}
+        </span>
+      )}
     </Link>
   );
 
@@ -64,10 +101,10 @@ export default function Navbar() {
         {/* CENTER NAV */}
         <nav className="hidden lg:flex items-center gap-1">
           {navItem("/", "Home")}
-          {navItem("/roadmap", "Roadmap")}
+          {navItem("/roadmap", "Roadmap", { badge: "NEW" })}
           {navItem("/analyze", "Analyze")}
           {navItem("/progress", "Progress")}
-          {navItem("/lfg", "LFG")}
+          {navItem("/lfg", "LFG", { count: lfgCount })}
           {navItem("/insights", "Insights")}
         </nav>
 
@@ -81,7 +118,7 @@ export default function Navbar() {
             Premium
           </Link>
 
-          {/* LOGIN / DASHBOARD */}
+          {/* DASHBOARD */}
           <Link
             href="/dashboard"
             className="px-3 py-1.5 rounded-md bg-neutral-800 text-sm text-white hover:bg-neutral-700 transition"
